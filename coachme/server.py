@@ -17,6 +17,7 @@ while True:
         jsonout = {}
         #jsonout['img'] = data.encode('base64')
         jsonout['test'] = "json is working.."
+        jsonout['forwardto'] = ""
         jsondump = json.dumps(jsonout)
         c.send(jsondump.encode())
         c.close()
