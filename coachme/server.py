@@ -59,19 +59,7 @@ start_new_thread(device, (d,))
 #client
 while True:
     c, addr = s.accept()
-<<<<<<< HEAD
     print('Got connection from'+str(addr))
     start_new_thread(client, (c,))
-
 c.close()
 d.close()
-=======
-    try:
-        print_lock.acquire()
-        print('Got connection from'+str(addr))
-        start_new_thread(device, (c,))
-    except IOError:
-        c.send('IOError!')
-        c.close()
-        print('Closed.')
->>>>>>> refs/remotes/origin/master
