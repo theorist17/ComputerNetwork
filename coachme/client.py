@@ -1,5 +1,6 @@
 import socket
 import json
+import re
 
 #conn
 serverName = '175.113.152.102'
@@ -9,16 +10,31 @@ client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((serverName, serverPort))
 
 #recv
+lenString = ''
+# entering in the middle of stream
+while True:
+    char = client.recv(1).decode()
+    while char.isdigit(): # digit sequence
+        lenString += char
+        char = client.recv(1).decode()
+    if char == '\n': # ending with line feed
+        print("LENG", lenString)
+        print("DATA", client.recv(int(lenString)))
+        break
+    else:
+        lenString = ''
+
+# parse json data
+lenString = ''
 data = {}
-dataLen = ''
 while True:
     char = client.recv(1).decode()
     while char != '\n':
-        dataLen += char
+        lenString += char
         char = client.recv(1).decode()
-    #print("LENG", dataLen)
-    total = int(dataLen)
-    dataLen = '' 
+    #print("LENG", lenString)
+    total = int(lenString)
+    lenString = '' 
     view = memoryview(bytearray(total))
     nextOffset = 0
     while total - nextOffset > 0:
