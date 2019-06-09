@@ -9,7 +9,7 @@ img = cv2.imread('lena_gray.bmp',0)
 cv2.imshow('image',img)
 
 with open("lena_gray.bmp", "rb") as f:
-    jpg = f.read()
+    bmp = f.read()
 
 #conn
 serverName = '175.113.152.102'
@@ -20,13 +20,13 @@ device.connect((serverName, serverPort))
 
 #send
 data = {}
-strarr = numpy.array_str(img)
+#strarr = numpy.array_str(img)
 #print("string", strarr)
-strb64 = base64.b64encode(strarr.encode()).decode()
+#strb64 = base64.b64encode(strarr.encode()).decode()
 #print("base64", strb64)
-strarr = base64.b64decode(strb64)
+#strarr = base64.b64decode(strb64)
 
-data['img'] = base64.b64encode(jpg).decode()
+data['img'] = base64.b64encode(bmp).decode()
 data['txt'] = "from macbook with love"
 jsondata = json.dumps(data)
 
