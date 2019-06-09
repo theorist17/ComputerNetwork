@@ -7,7 +7,7 @@ import threading
 
 mutex = threading.Lock()
 queue = []
-forward = False
+forward = True#False
 
 def device(c):
     global forward
@@ -19,7 +19,7 @@ def device(c):
         #print(jsondata)
         if not jsondata:
             break 
-        if forward:
+        if forward and len(queue) < 10000: #10000 times of 1024bytes
             #print("appending")
             with mutex:
                 queue.append(jsondata)
@@ -37,7 +37,7 @@ def client(c):
             #print("forwarding")
             with mutex:
                 jsondata = queue.pop(0)
-                #print("Pop " + jsondata)
+                print("Pop " + jsondata.decode())
                 c.sendall(jsondata)#.encode())
         #else:
             #print("empty")
