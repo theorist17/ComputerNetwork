@@ -33,12 +33,12 @@ while True:
         lenString += char
         char = client.recv(1).decode()
     #print("LENG", lenString)
-    total = int(lenString)
+    numToRead = int(lenString)
     lenString = '' 
-    view = memoryview(bytearray(total))
+    view = memoryview(bytearray(numToRead))
     nextOffset = 0
-    while total - nextOffset > 0:
-        recvSize = client.recv_into(view[nextOffset:], total - nextOffset)
+    while numToRead - nextOffset > 0:
+        recvSize = client.recv_into(view[nextOffset:], numToRead - nextOffset)
         nextOffset += recvSize
     #print("DATA", view.tobytes().decode("utf-8"))
     data = json.loads(view.tobytes())
