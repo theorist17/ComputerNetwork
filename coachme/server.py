@@ -7,9 +7,10 @@ import threading
 
 mutex = threading.Lock()
 queue = []
-forward = True#False
+forward = False
 
 def device(c):
+    print("Device on.")
     global forward
     global queue
     global mutex 
@@ -19,7 +20,7 @@ def device(c):
         #print(jsondata)
         if not jsondata:
             break 
-        if forward and len(queue) < 10000: #10000 times of 1024bytes
+        if forward and len(queue) < 10000: #1M times of 1024bytes = 1Gb
             #print("appending")
             with mutex:
                 queue.append(jsondata)
@@ -39,6 +40,7 @@ def client(c):
                 jsondata = queue.pop(0)
                 print("Pop " + jsondata.decode())
                 c.sendall(jsondata)#.encode())
+
         #else:
             #print("empty")
     forward = False
@@ -51,15 +53,18 @@ s.bind(('', port))
 s.listen(5)
 print("Listenning...")
 
-#device
-d, addr = s.accept()
-print('Got connection from'+str(addr))
-start_new_thread(device, (d,))
-
 #client
+dev = ()
 while True:
     c, addr = s.accept()
-    print('Got connection from'+str(addr))
-    start_new_thread(client, (c,))
+    print('Got connection from '+str(addr))
+    if not dev or dev[0] == addr[0]:
+        print('Device was '+str(dev))
+        dev = addr
+        print('Device is '+str(dev))
+        start_new_thread(device, (c,))
+    else:
+        print('Device is '+str(dev))
+        start_new_thread(client, (c,))
 c.close()
 d.close()
