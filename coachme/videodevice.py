@@ -19,31 +19,32 @@ device = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 device.connect((serverName, serverPort))
 
 # Read video
-cap = cv2.VideoCapture("test.wmv")
+cap = cv2.VideoCapture("squat1.mp4")
 
 #send
 data = {}
+skip = 10
+fno = 0
 if cap.isOpened() is False:
     print("Error opening video stream or file")
 while cap.isOpened():
     ret_val, image = cap.read()
-
-    # JSON
-    data['img'] = base64.b64encode(image).decode()
-    data['txt'] = "from macbook with love"
-    jsondata = json.dumps(data)
-
-    # Sending 
-    device.send(('%d\n' % len(jsondata)).encode())
-    device.sendall(jsondata.encode())
-
-    # DEBUG
-    print("LENG", len(jsondata))
-    print("DATA", jsondata.encode())
-    cv2.imshow('Sent image (original)', image) 
-    cv2.imshow('Sent image (decoded in python)', stringToRGB(data['img']))
-
+    if fno == 10:
+        ret_bmp, bmp = cv2.imencode(".bmp", image)
+        # Into JSON
+        data['img'] = base64.b64encode(bmp).decode()
+        data['txt'] = "from macbook with love"
+        jsondata = json.dumps(data)
+        # Sending to server (which will forward to client)
+        device.send(('%d\n' % len(jsondata)).encode())
+        device.sendall(jsondata.encode())
+        # For debug
+        print("LENG", len(jsondata))
+        #print("DATA", jsondata.encode())
+        cv2.imshow('Sent image (original)', image) 
+        cv2.imshow('Sent image (decoded in python)', stringToRGB(data['img']))
     if cv2.waitKey(1) == 27:
         break
+    fno += 1
 
 cv2.destroyAllWindows()

@@ -1,6 +1,15 @@
+import io
+import numpy as np
+import cv2
 import socket
 import json
 import re
+from PIL import Image
+
+def stringToRGB(base64_string):
+    imgdata = base64.b64decode(str(base64_string))
+    image = Image.open(io.BytesIO(imgdata))
+    return cv2.cvtColor(np.array(image), cv2.COLOR_BGR2RGB)
 
 #conn
 serverName = '175.113.152.102'
@@ -32,7 +41,7 @@ while True:
     while char != '\n':
         lenString += char
         char = client.recv(1).decode()
-    #print("LENG", lenString)
+    print("LENG", lenString)
     numToRead = int(lenString)
     lenString = '' 
     view = memoryview(bytearray(numToRead))
