@@ -38,7 +38,7 @@ lenString = ''
 data = {}
 while True:
     char = client.recv(1).decode()
-    while char != '\n':
+    while char != '\n': # digit sequence
         lenString += char
         char = client.recv(1).decode()
     print("LENG", lenString)
@@ -51,4 +51,5 @@ while True:
         nextOffset += recvSize
     #print("DATA", view.tobytes().decode("utf-8"))
     data = json.loads(view.tobytes())
-    print(data['img'])
+    #print(data['img'])
+    cv2.imshow('Received image '), stringToRGB(data['img'])
